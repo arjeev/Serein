@@ -70,6 +70,10 @@ impl NativeInput {
 				state.pending_toggles ^= 2;
 				true
 			}
+			(KeybindAction::ToggleScreenShare, true) => {
+				state.pending_toggles ^= 4;
+				true
+			}
 			_ => false,
 		};
 		drop(state);
@@ -392,6 +396,7 @@ impl Hotkeys {
 			mask | match action {
 				KeybindAction::ToggleMute => 1,
 				KeybindAction::ToggleDeafen => 2,
+				KeybindAction::ToggleScreenShare => 4,
 				_ => 0,
 			}
 		});
@@ -508,7 +513,7 @@ async fn portal(
 	let modifier_required = bindings.iter().any(|(action, chord)| {
 		matches!(
 			action,
-			KeybindAction::ToggleMute | KeybindAction::ToggleDeafen
+			KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
 		) && chord.is_valid()
 			&& chord.modifiers == 0
 			&& !is_mouse_button(&chord.key)
@@ -606,6 +611,9 @@ async fn portal(
 					KeybindAction::ToggleDeafen => {
 						pending.fetch_xor(2, Ordering::Relaxed);
 					}
+					KeybindAction::ToggleScreenShare => {
+						pending.fetch_xor(4, Ordering::Relaxed);
+					}
 					_ => continue,
 				}
 				wake();
@@ -639,6 +647,7 @@ fn portal_id(action: KeybindAction) -> &'static str {
 		KeybindAction::PushToMute => "push-to-mute",
 		KeybindAction::ToggleMute => "toggle-mute",
 		KeybindAction::ToggleDeafen => "toggle-deafen",
+		KeybindAction::ToggleScreenShare => "toggle-screen-share",
 		_ => "voice-shortcut",
 	}
 }
@@ -650,6 +659,7 @@ fn portal_description(action: KeybindAction) -> &'static str {
 		KeybindAction::PushToMute => "Serein push to mute",
 		KeybindAction::ToggleMute => "Toggle Serein microphone mute",
 		KeybindAction::ToggleDeafen => "Toggle Serein deafen",
+		KeybindAction::ToggleScreenShare => "Toggle Serein screen share",
 		_ => "Serein voice shortcut",
 	}
 }
@@ -898,6 +908,7 @@ mod mouse {
 				mask | match action {
 					KeybindAction::ToggleMute => 1,
 					KeybindAction::ToggleDeafen => 2,
+					KeybindAction::ToggleScreenShare => 4,
 					_ => 0,
 				}
 			});
@@ -912,7 +923,7 @@ mod mouse {
 			for (action, button, _) in &watched {
 				if matches!(
 					action,
-					KeybindAction::ToggleMute | KeybindAction::ToggleDeafen
+					KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
 				) && !toggle_groups.iter().any(|(group_action, group_button)| {
 					group_action == action && group_button.0 == button.0
 				}) {
@@ -940,7 +951,7 @@ mod mouse {
 							if was != now
 								&& !matches!(
 									action,
-									KeybindAction::ToggleMute | KeybindAction::ToggleDeafen
+									KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
 								) {
 								native.apply(MOUSE_ID + index as u32, *action, *now);
 							}

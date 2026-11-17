@@ -3008,6 +3008,76 @@ impl Desktop {
 		{
 			self.command(command);
 		}
+		if toggles & 4 != 0 {
+			self.toggle_screen_share();
+		}
+	}
+	fn toggle_screen_share(&mut self) {
+		if self.fixture_only || self.state.demo {
+			return;
+		}
+		let Some(call) = &self.state.voice.active else {
+			return;
+		};
+		if !matches!(
+			call.phase,
+			client_core::voice::Phase::Connected | client_core::voice::Phase::Waiting
+		) || !self.state.can_stream(call.channel) {
+			return;
+		}
+		if self.messaging.screen.busy {
+			let cue = model::notification_preferences::Sound::ScreenShareOff;
+			if self.messaging.notification_options.allows(cue) {
+				self.messaging.notification_preview = Some(cue);
+			}
+			self.messaging.screen.stop_direct();
+			return;
+		}
+		let sources = discord_voice::screen::sources().ok().unwrap_or_default();
+		let preferred = sources
+			.iter()
+			.find(|s| {
+				matches!(s.id, client_core::screen::SourceId::Display(_))
+					&& s.name.to_lowercase().contains("vg240y")
+			})
+			.or_else(|| {
+				sources
+					.iter()
+					.find(|s| matches!(s.id, client_core::screen::SourceId::Display(_)))
+			})
+			.or_else(|| sources.first());
+		let Some(source) = preferred else {
+			return;
+		};
+		let (width, height) = client_core::screen::picture(
+			client_core::screen::Resolution::Source,
+			source.width,
+			source.height,
+			source.id.sized_after_pick(),
+		)
+		.unwrap_or((source.width & !1, source.height & !1));
+		let settings = client_core::screen::Settings {
+			source: source.id,
+			width,
+			height,
+			fps: 60,
+			cursor: true,
+			audio: true,
+		};
+		if settings.valid() {
+			let cue = model::notification_preferences::Sound::ScreenShareOn;
+			if self.messaging.notification_options.allows(cue) {
+				self.messaging.notification_preview = Some(cue);
+			}
+			let title = (!matches!(
+				source.id,
+				client_core::screen::SourceId::SystemPicker | client_core::screen::SourceId::Portal
+			))
+			.then(|| source.name.clone());
+			self.messaging
+				.screen
+				.start_direct(&self.state, settings, title);
+		}
 	}
 	fn sync_tray(&mut self, ctx: &egui::Context) {
 		let previous_status = self.messaging.tray_status;

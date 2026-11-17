@@ -821,6 +821,16 @@ impl MessagingUi {
 				}) {
 				toggles |= 2;
 			}
+			if self
+				.keybinds
+				.chords(model::KeybindAction::ToggleScreenShare)
+				.any(|chord| {
+					!registered_globally(model::KeybindAction::ToggleScreenShare, chord)
+						&& (!wants_keyboard || model::keybinds::is_mouse_button(&chord.key))
+						&& crate::keybinds::pressed(input, chord)
+				}) {
+				toggles |= 4;
+			}
 			toggles
 		})
 	}

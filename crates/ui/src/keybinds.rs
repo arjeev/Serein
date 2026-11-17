@@ -35,6 +35,7 @@ const VOICE: &[KeybindAction] = &[
 	KeybindAction::ToggleDeafen,
 	KeybindAction::PushToTalk,
 	KeybindAction::PushToMute,
+	KeybindAction::ToggleScreenShare,
 ];
 
 pub(super) fn show(

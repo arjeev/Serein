@@ -75,6 +75,25 @@ impl Default for ScreenUi {
 	}
 }
 impl ScreenUi {
+	pub fn start_direct(&mut self, state: &State, settings: Settings, title: Option<String>) {
+		let Some(call) = &state.voice.active else {
+			return;
+		};
+		self.context = Some((state.generation, call.channel, call.request));
+		self.started = Some(LiveShare {
+			title,
+			height: settings.height,
+			fps: settings.fps,
+		});
+		self.request = Some(Request::Start(settings));
+		self.open = false;
+	}
+
+	pub fn stop_direct(&mut self) {
+		self.request = Some(Request::Stop);
+		self.open = false;
+	}
+
 	pub(crate) fn launch(&mut self, state: &State) {
 		let Some(call) = &state.voice.active else {
 			return;

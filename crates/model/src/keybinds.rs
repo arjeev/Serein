@@ -71,10 +71,11 @@ pub enum KeybindAction {
 	ToggleMute,
 	ToggleDeafen,
 	CopyIssueDiagnostics,
+	ToggleScreenShare,
 }
 
 impl KeybindAction {
-	pub const ALL: [Self; 19] = [
+	pub const ALL: [Self; 20] = [
 		Self::ShowShortcuts,
 		Self::SwitchConversation,
 		Self::SearchConversation,
@@ -94,6 +95,7 @@ impl KeybindAction {
 		Self::ToggleMute,
 		Self::ToggleDeafen,
 		Self::CopyIssueDiagnostics,
+		Self::ToggleScreenShare,
 	];
 
 	pub const fn label(self) -> &'static str {
@@ -117,6 +119,7 @@ impl KeybindAction {
 			Self::ToggleMute => "Toggle Mute",
 			Self::ToggleDeafen => "Toggle Deafen",
 			Self::CopyIssueDiagnostics => "Copy Issue Diagnostics",
+			Self::ToggleScreenShare => "Toggle Screen Share",
 		}
 	}
 
@@ -128,7 +131,7 @@ impl KeybindAction {
 	pub const fn is_global(self) -> bool {
 		matches!(
 			self,
-			Self::PushToTalk | Self::PushToMute | Self::ToggleMute | Self::ToggleDeafen
+			Self::PushToTalk | Self::PushToMute | Self::ToggleMute | Self::ToggleDeafen | Self::ToggleScreenShare
 		)
 	}
 }
@@ -156,6 +159,7 @@ pub struct Keybinds {
 	pub push_to_mute: KeyChord,
 	pub toggle_mute: KeyChord,
 	pub toggle_deafen: KeyChord,
+	pub toggle_screen_share: KeyChord,
 	/// Unassigned by default; the empty key is valid only for optional actions.
 	pub copy_issue_diagnostics: KeyChord,
 	/// Extra user-defined bindings for any action; unassigned rows are not saved.
@@ -230,6 +234,7 @@ impl Default for Keybinds {
 			push_to_mute: KeyChord::new("", 0),
 			toggle_mute: KeyChord::new("M", PRIMARY | SHIFT),
 			toggle_deafen: KeyChord::new("D", PRIMARY | SHIFT),
+			toggle_screen_share: KeyChord::new("F9", 0),
 			copy_issue_diagnostics: KeyChord::new("", 0),
 			custom: Vec::new(),
 		}
@@ -257,6 +262,7 @@ impl Keybinds {
 			KeybindAction::PushToMute => &self.push_to_mute,
 			KeybindAction::ToggleMute => &self.toggle_mute,
 			KeybindAction::ToggleDeafen => &self.toggle_deafen,
+			KeybindAction::ToggleScreenShare => &self.toggle_screen_share,
 			KeybindAction::CopyIssueDiagnostics => &self.copy_issue_diagnostics,
 		}
 	}
@@ -281,6 +287,7 @@ impl Keybinds {
 			KeybindAction::PushToMute => &mut self.push_to_mute,
 			KeybindAction::ToggleMute => &mut self.toggle_mute,
 			KeybindAction::ToggleDeafen => &mut self.toggle_deafen,
+			KeybindAction::ToggleScreenShare => &mut self.toggle_screen_share,
 			KeybindAction::CopyIssueDiagnostics => &mut self.copy_issue_diagnostics,
 		}
 	}
