@@ -3022,7 +3022,8 @@ impl Desktop {
 		if !matches!(
 			call.phase,
 			client_core::voice::Phase::Connected | client_core::voice::Phase::Waiting
-		) || !self.state.can_stream(call.channel) {
+		) || !self.state.can_stream(call.channel)
+		{
 			return;
 		}
 		if self.messaging.screen.busy {
