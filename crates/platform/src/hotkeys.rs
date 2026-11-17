@@ -513,7 +513,9 @@ async fn portal(
 	let modifier_required = bindings.iter().any(|(action, chord)| {
 		matches!(
 			action,
-			KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
+			KeybindAction::ToggleMute
+				| KeybindAction::ToggleDeafen
+				| KeybindAction::ToggleScreenShare
 		) && chord.is_valid()
 			&& chord.modifiers == 0
 			&& !is_mouse_button(&chord.key)
@@ -923,7 +925,9 @@ mod mouse {
 			for (action, button, _) in &watched {
 				if matches!(
 					action,
-					KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
+					KeybindAction::ToggleMute
+						| KeybindAction::ToggleDeafen
+						| KeybindAction::ToggleScreenShare
 				) && !toggle_groups.iter().any(|(group_action, group_button)| {
 					group_action == action && group_button.0 == button.0
 				}) {
@@ -951,7 +955,9 @@ mod mouse {
 							if was != now
 								&& !matches!(
 									action,
-									KeybindAction::ToggleMute | KeybindAction::ToggleDeafen | KeybindAction::ToggleScreenShare
+									KeybindAction::ToggleMute
+										| KeybindAction::ToggleDeafen
+										| KeybindAction::ToggleScreenShare
 								) {
 								native.apply(MOUSE_ID + index as u32, *action, *now);
 							}

@@ -131,7 +131,11 @@ impl KeybindAction {
 	pub const fn is_global(self) -> bool {
 		matches!(
 			self,
-			Self::PushToTalk | Self::PushToMute | Self::ToggleMute | Self::ToggleDeafen | Self::ToggleScreenShare
+			Self::PushToTalk
+				| Self::PushToMute
+				| Self::ToggleMute
+				| Self::ToggleDeafen
+				| Self::ToggleScreenShare
 		)
 	}
 }
